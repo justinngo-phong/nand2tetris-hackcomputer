@@ -1,0 +1,13 @@
+// VM commands the invoke the immediate variants addi and subi
+// Author: Naga Kandasamy
+// Date modified: June 3, 2022
+// Correct result: RAM[400] = 6, RAM[401] = 9
+
+loadi d10 400
+loadi d1 5 
+loadi d2 10
+addi d1 d1 1
+store d1 d10 0
+subi d2 d2 1
+store d2 d10 1
+end

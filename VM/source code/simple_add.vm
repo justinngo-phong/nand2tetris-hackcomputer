@@ -1,0 +1,11 @@
+// VM commands to add 5 + 10
+// Author: Naga Kandasamy
+// Date modified: June 3, 2022
+// Correct result: RAM[400] = 15
+
+loadi d1 5 
+loadi d2 10
+add d1 d1 d2
+loadi d10 400
+store d1 d10 0
+end

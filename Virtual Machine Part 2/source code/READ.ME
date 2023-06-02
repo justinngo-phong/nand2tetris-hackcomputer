@@ -1,0 +1,17 @@
+README first
+
+vm_translator_v2.py by Justin Ngo
+12/2/2022
+
+The assembler was written in Python so there is no building needed.
+To execute the assembler, put the .asm file in the same folder as the assembler, and execute the following command line in your terminal:
+$python .\vm_translator_v2.py <filename>-final.asm .\<file_folder>
+
+-> output = <filename>-final.asm in the same <file_folder>
+
+After making the .asm file, use the assembler to create the .hack file:
+$python .\assembler.py '.\<file_folder>\<filename>-final.asm'
+
+-> output = <filename>-final.hack
+
+All .hack file are compiled in the their corresponding folder.

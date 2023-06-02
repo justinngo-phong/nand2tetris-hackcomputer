@@ -1,0 +1,8 @@
+// Main function calls the addition function to add 4 + 8
+// Author: Naga Kandasamy
+// Date: September 8, 2020
+
+function main 0
+push constant 4
+call factorial 1              // 4!
+return

@@ -1,0 +1,91 @@
+/**
+ * The Hack CPU (Central Processing unit), consisting of an ALU,
+ * two registers named A and D, and a program counter named PC.
+ * The CPU is designed to fetch and execute instructions written in 
+ * the Hack machine language. In particular, functions as follows:
+ * Executes the inputted instruction according to the Hack machine 
+ * language specification. The D and A in the language specification
+ * refer to CPU-resident registers, while M refers to the external
+ * memory location addressed by A, i.e. to Memory[A]. The inM input 
+ * holds the value of this location. If the current instruction needs 
+ * to write a value to M, the value is placed in outM, the address 
+ * of the target location is placed in the addressM output, and the 
+ * writeM control bit is asserted. (When writeM==0, any value may 
+ * appear in outM). The outM and writeM outputs are combinational: 
+ * they are affected instantaneously by the execution of the current 
+ * instruction. The addressM and pc outputs are clocked: although they 
+ * are affected by the execution of the current instruction, they commit 
+ * to their new values only in the next time step. If reset==1 then the 
+ * CPU jumps to address 0 (i.e. pc is set to 0 in next time step) rather 
+ * than to the address resulting from executing the current instruction.
+ * 
+ * Author: Naga Kandasamy
+ * Date created: October 6, 2020
+ * Date modified: June 3, 2022
+ * 
+ * Student name: Justin Ngo
+ * Date modified: 12/7/2022
+ */
+
+CHIP CPU {
+
+    IN  inM[16],         // M value input  (M = contents of RAM[A])
+        instruction[16], // Instruction for execution
+        reset;           // Signals whether to re-start the current
+                         // program (reset==1) or continue executing
+                         // the current program (reset==0).
+
+    OUT outM[16],        // M value output
+        writeM,          // Write to M? 
+        addressM[15],    // Address in data memory (of M)
+        pc[15];          // address of next instruction
+
+    PARTS:
+    // handle A-register
+    // choose between constant (A-instr) or ALU output (if C-instr) for input to A-register
+    Mux16(a=instruction, b=outAlu, sel=instruction[15], out=inA);
+    // check if load bit for A-register should be asserted
+    Not(in=instruction[15], out=isA); // 1 if A-instruction, 0 if C-instruction
+    Or(a=isA, b=instruction[5], out=loadA); // A-instr OR d1 is set
+    ARegister(in=inA, load=loadA, out=outA, out[0..14]=addressM);
+
+    // handle D-register
+    // check if load bit for D-register should be asserted
+    And(a=instruction[4], b=instruction[15], out=loadD);
+    DRegister(in=outAlu, load=loadD, out=outD);
+
+    // set ALU's y-input to either A or M = RAM[A]
+    Mux16(a=outA, b=inM, sel=instruction[12], out=AorM);
+
+    // handle pins for ALU
+    ALU(x=outD, y=AorM, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], zr=zr, ng=ng, v=v, out=outAlu, out=outM);
+	
+	// check if writeM is asserted
+    And(a=instruction[15], b=instruction[3], out=writeM); // C-instr and d3 is set
+	
+    // check if ALU's computed value is positive
+    Not(in=zr, out=notzr);
+    Not(in=ng, out=notng);
+    And(a=notzr, b=notng, out=pos);
+	
+	And(a=instruction[15], b=instruction[0], out=jgt);
+	And(a=jgt, b=pos, out=jump1);
+	
+	And(a=instruction[15], b=instruction[1], out=jeq);
+	And(a=jeq, b=zr, out=jump2);
+	
+	And(a=instruction[15], b=instruction[2], out=jlt);
+	And(a=jlt, b=ng, out=jump3);
+	
+	// check for jump
+	Or(a=jump1, b=jump2, out=jumptemp);
+	Or(a=jumptemp, b=jump3, out=loadpc1);
+	
+	// check for jump flag or overflow flag
+	Or(a=loadpc1, b=v, out=loadpc);
+
+	// check if overflow then input 2048 to pc
+	Mux16(a=outA, b[12..15]=false, b[11]=true, b[0..10]=false, sel=v, out=inputPC);
+    // reset, load, or increment PC
+    PC(in=inputPC, load=loadpc, inc=true, reset=reset, out[0..14]=pc);    
+}

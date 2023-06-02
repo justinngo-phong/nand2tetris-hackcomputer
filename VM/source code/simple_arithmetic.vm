@@ -1,0 +1,17 @@
+// VM commands for arithmetic and memory access operations
+// Author: Naga Kandasamy
+// Date modified: June 3, 2022
+// Correct results: RAM[400] = 10, RAM[401] = 5
+
+loadi d0 400
+loadi d1 5
+loadi d2 5
+store d1 d0 0
+store d2 d0 1
+load d10 d0 0
+load d11 d0 1
+add d10 d10 d11
+store d10 d0 0
+sub d12 d10 d11
+store d12 d0 1
+end

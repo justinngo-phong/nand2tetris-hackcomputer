@@ -1,0 +1,36 @@
+/**
+ * Adds two 16-bit values x and y to generate a 16-bit output z.
+ * The most significant carry bit is ignored.
+ * Implementation uses a ripple-carry adder.
+ * 
+ * Author: Naga Kandasamy
+ * Date created: July 13, 2020
+ * Date modifeid: December 3, 2021
+ * 
+ * Student name: Justin Ngo
+ * Date modified: 12/7/2022
+ */
+
+CHIP Add16 {
+    IN x[16], y[16];
+    OUT z[16], v;       // v is the overflow-signal line 
+
+    PARTS:
+    HalfAdder(x=x[0], y=y[0], z=z[0], cout=c0);
+    FullAdder(x=x[1], y=y[1], cin=c0, z=z[1], cout=c1);
+    FullAdder(x=x[2], y=y[2], cin=c1, z=z[2], cout=c2);
+    FullAdder(x=x[3], y=y[3], cin=c2, z=z[3], cout=c3);
+    FullAdder(x=x[4], y=y[4], cin=c3, z=z[4], cout=c4);
+    FullAdder(x=x[5], y=y[5], cin=c4, z=z[5], cout=c5);
+    FullAdder(x=x[6], y=y[6], cin=c5, z=z[6], cout=c6);
+    FullAdder(x=x[7], y=y[7], cin=c6, z=z[7], cout=c7);
+    FullAdder(x=x[8], y=y[8], cin=c7, z=z[8], cout=c8);
+    FullAdder(x=x[9], y=y[9], cin=c8, z=z[9], cout=c9);
+    FullAdder(x=x[10], y=y[10], cin=c9, z=z[10], cout=c10);
+    FullAdder(x=x[11], y=y[11], cin=c10, z=z[11], cout=c11);
+    FullAdder(x=x[12], y=y[12], cin=c11, z=z[12], cout=c12);
+    FullAdder(x=x[13], y=y[13], cin=c12, z=z[13], cout=c13);
+    FullAdder(x=x[14], y=y[14], cin=c13, z=z[14], cout=c14);
+    FullAdder(x=x[15], y=y[15], cin=c14, z=z[15], cout=cout);
+	Xor(a=c14,b=cout,out=v);
+}
