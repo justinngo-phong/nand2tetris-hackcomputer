@@ -1,2 +1,3 @@
-# ECE350
-Drexel ECE 350 - Computer Organization
+# Nand2Tetris - Hack Computer
+
+Author: Justin Ngo
