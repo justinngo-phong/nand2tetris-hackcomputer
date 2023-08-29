@@ -1,9 +1,0 @@
-// Code to intialize the system prior to executing Code
-// Author: Naga Kandasamy
-// Date: September 8, 2020
-// Expected answer: The value of -165 is stored in RAM[256], which is the top of the stack
-
-function init 0
-set sp 256
-call main 0 
-end

@@ -1,7 +1,0 @@
-// Adds argument 1 + argument 2
-
-function add 2
-push argument 0
-push argument 1
-add 
-return
